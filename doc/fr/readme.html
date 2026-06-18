@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotepadPlusPlus — Documentation NVDA v4.1</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header>
+    <h1>NotepadPlusPlus — Module complementaire NVDA</h1>
+    <p class="version">Version 4.1 — 2026-06-05</p>
+    <p class="authors">
+        Auteurs : Youenn Daviaud, Mael Fer, Baptiste Picquart (ECAM Rennes / My Human Kit),
+        FrancoisLB (My Human Kit)<br>
+        Contact : <a href="mailto:contact@myhumankit.org">contact@myhumankit.org</a><br>
+        Licence : GPL v2 ou ulterieure
+    </p>
+</header>
+
+<nav aria-label="Table des matieres">
+    <h2>Table des matieres</h2>
+    <ul>
+        <li><a href="#presentation">Presentation</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#langages">Detection du langage</a></li>
+        <li><a href="#information">Raccourcis — Information</a></li>
+        <li><a href="#navigation-structure">Raccourcis — Navigation par structure</a></li>
+        <li><a href="#fenetre-navigation">Fenetre de navigation NVDA+F7</a></li>
+        <li><a href="#navigation-indentation">Raccourcis — Navigation par indentation</a></li>
+        <li><a href="#selection">Raccourcis — Selection de blocs</a></li>
+        <li><a href="#execution">Raccourcis — Execution</a></li>
+        <li><a href="#resume">Resume des raccourcis</a></li>
+        <li><a href="#historique">Historique des versions</a></li>
+    </ul>
+</nav>
+
+<main>
+
+<section id="presentation">
+    <h2>Presentation</h2>
+    <p>
+        Ce module ameliore l'accessibilite de l'editeur Notepad++ pour les
+        developpeurs aveugles ou malvoyants utilisant le lecteur d'ecran NVDA.
+        Il ajoute des raccourcis clavier pour naviguer dans le code source Python
+        et C/C++ sans avoir a parcourir le fichier ligne par ligne.
+    </p>
+    <p>Compatibilite :</p>
+    <ul>
+        <li>Notepad++ 32 bits et 64 bits (Windows 10 / Windows 11)</li>
+        <li>NVDA 2025.1 minimum, teste jusqu'a NVDA 2026.1</li>
+        <li>Langages supportes :
+            <ul>
+                <li>Python : .py .pyw .pyi</li>
+                <li>C/C++/Arduino : .c .cpp .cxx .h .hpp .ino</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+
+<section id="installation">
+    <h2>Installation</h2>
+    <ol>
+        <li>Telecharger le fichier <code>NotepadPlusPlus-4.1.nvda-addon</code></li>
+        <li>Double-cliquer dessus depuis l'Explorateur Windows</li>
+        <li>NVDA affiche une boite de dialogue de confirmation — accepter</li>
+        <li>Redemarrer NVDA (Ctrl+Alt+N ou depuis le menu NVDA)</li>
+    </ol>
+    <h3>Desinstallation</h3>
+    <ol>
+        <li>Ouvrir le menu NVDA</li>
+        <li>Aller dans Outils &gt; Gestionnaire d'extensions</li>
+        <li>Selectionner l'addon NotepadPlusPlus</li>
+        <li>Cliquer sur "Supprimer"</li>
+        <li>Redemarrer NVDA</li>
+    </ol>
+</section>
+
+<section id="langages">
+    <h2>Detection automatique du langage</h2>
+    <p>
+        A l'ouverture d'un fichier dans Notepad++, le module detecte
+        automatiquement le langage a partir de l'extension du fichier
+        et l'annonce vocalement.
+    </p>
+    <ul>
+        <li><strong>Python</strong> : annonce "Python" pour les fichiers .py .pyw .pyi</li>
+        <li><strong>C/C++</strong> : annonce "C/C++" pour les fichiers .c .cpp .cxx .h .hpp .ino</li>
+        <li><strong>Inconnu</strong> : annonce "type non reconnu" pour les autres fichiers</li>
+    </ul>
+    <p>Les raccourcis de navigation s'adaptent automatiquement au langage detecte.</p>
+</section>
+
+<section id="information">
+    <h2>Raccourcis — Information</h2>
+    <dl>
+        <dt><kbd>F4</kbd></dt>
+        <dd>Annonce le numero de la ligne courante. Fonctionne pour tous les langages.</dd>
+
+        <dt><kbd>Ctrl+F4</kbd></dt>
+        <dd>
+            Annonce le niveau d'indentation de la ligne courante.
+            <ul>
+                <li>Python : signale une erreur si l'indentation n'est pas un multiple de 4.</li>
+                <li>C/C++ : annonce le nombre d'espaces sans jugement.</li>
+            </ul>
+        </dd>
+    </dl>
+</section>
+
+<section id="navigation-structure">
+    <h2>Raccourcis — Navigation par structure de code</h2>
+    <dl>
+        <dt><kbd>NVDA+F7</kbd></dt>
+        <dd>Ouvre la fenetre de navigation (voir section dediee ci-dessous).</dd>
+
+        <dt><kbd>F7</kbd> / <kbd>Maj+F7</kbd></dt>
+        <dd>
+            Aller a la declaration de classe suivante / precedente.
+            Annonce : "nom_classe ligne X".
+            Disponible en Python et C/C++.
+        </dd>
+
+        <dt><kbd>F8</kbd> / <kbd>Maj+F8</kbd></dt>
+        <dd>
+            Aller a la declaration de fonction ou methode suivante / precedente.
+            Annonce : "nom_fonction ligne X".
+            Disponible en Python et C/C++.
+        </dd>
+
+        <dt><kbd>F2</kbd></dt>
+        <dd>
+            Aller au bloc <code>if __name__ == '__main__'</code>.
+            Recherche depuis le debut du fichier.
+            Python uniquement.
+        </dd>
+    </dl>
+</section>
+
+<section id="fenetre-navigation">
+    <h2>Fenetre de navigation — NVDA+F7</h2>
+    <p>
+        La fenetre de navigation liste toutes les fonctions et classes du fichier
+        courant. Elle s'inspire de la liste d'elements NVDA disponible en mode
+        navigation web.
+    </p>
+
+    <h3>A l'ouverture</h3>
+    <ul>
+        <li>Le focus est place sur le champ de filtre.</li>
+        <li>
+            La liste est pre-selectionnee sur l'element le plus proche
+            de la position courante du curseur dans le fichier.
+        </li>
+    </ul>
+
+    <h3>Contenu de la fenetre</h3>
+    <dl>
+        <dt>Champ filtre</dt>
+        <dd>
+            Tapez pour restreindre la liste par nom d'element.
+            Exemple : taper "init" affiche uniquement les elements
+            dont le nom contient "init" (__init__, initialize...).
+            Le filtre s'applique en temps reel.
+        </dd>
+
+        <dt>Boutons radio : Tout / Fonctions / Classes</dt>
+        <dd>
+            Filtrer la liste par type d'element.
+            NVDA annonce le nombre d'elements quand le focus entre dans la liste
+            apres un changement de filtre ou de type.
+        </dd>
+
+        <dt>Liste des elements</dt>
+        <dd>
+            Chaque element affiche son nom suivi de son numero de ligne.
+            Navigation avec les fleches haut et bas.
+            NVDA lit chaque element lors de la navigation.
+        </dd>
+
+        <dt>Bouton "Aller a"</dt>
+        <dd>
+            Ferme la fenetre et positionne le curseur sur la ligne
+            de l'element selectionne dans Notepad++.
+            NVDA annonce le numero de ligne.
+        </dd>
+
+        <dt>Bouton "Fermer"</dt>
+        <dd>Ferme la fenetre sans naviguer. Le curseur reste en place.</dd>
+    </dl>
+
+    <h3>Navigation clavier dans la fenetre</h3>
+    <table>
+        <caption>Raccourcis clavier de la fenetre de navigation</caption>
+        <thead>
+            <tr><th scope="col">Touche</th><th scope="col">Action</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><kbd>Tab</kbd> / <kbd>Maj+Tab</kbd></td><td>Passer d'un widget a l'autre</td></tr>
+            <tr><td><kbd>Fleche haut/bas</kbd></td><td>Element precedent / suivant dans la liste</td></tr>
+            <tr><td><kbd>Entree</kbd></td><td>Naviguer vers l'element selectionne</td></tr>
+            <tr><td><kbd>Echap</kbd></td><td>Fermer sans naviguer</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="navigation-indentation">
+    <h2>Raccourcis — Navigation par indentation</h2>
+    <p>Ces raccourcis fonctionnent pour tous les langages.</p>
+    <dl>
+        <dt><kbd>Alt+Bas</kbd></dt>
+        <dd>Aller vers la prochaine ligne plus indentee. Annonce : "texte ligne X, indentation Y".</dd>
+
+        <dt><kbd>Alt+Haut</kbd></dt>
+        <dd>Aller vers la prochaine ligne moins indentee. Annonce : "texte ligne X, indentation Y".</dd>
+
+        <dt><kbd>Ctrl+Alt+Bas</kbd></dt>
+        <dd>Prochaine ligne de meme indentation. Annonce : "texte ligne X".</dd>
+
+        <dt><kbd>Ctrl+Alt+Haut</kbd></dt>
+        <dd>Ligne precedente de meme indentation. Annonce : "texte ligne X".</dd>
+
+        <dt><kbd>Alt+Debut</kbd></dt>
+        <dd>Premiere ligne du niveau d'indentation courant. Annonce : "texte ligne X".</dd>
+
+        <dt><kbd>Alt+Fin</kbd></dt>
+        <dd>Derniere ligne du niveau d'indentation courant. Annonce : "texte ligne X".</dd>
+    </dl>
+</section>
+
+<section id="selection">
+    <h2>Raccourcis — Selection de blocs</h2>
+    <dl>
+        <dt><kbd>Ctrl+R</kbd></dt>
+        <dd>Selectionner la fonction ou methode courante.</dd>
+
+        <dt><kbd>Ctrl+Maj+R</kbd></dt>
+        <dd>Selectionner la classe courante.</dd>
+
+        <dt><kbd>Maj+Alt+Bas</kbd></dt>
+        <dd>Etendre la selection jusqu'au prochain changement de niveau d'indentation.</dd>
+
+        <dt><kbd>Maj+Alt+Haut</kbd></dt>
+        <dd>Etendre la selection jusqu'au changement de niveau precedent.</dd>
+    </dl>
+    <p>
+        <strong>Astuce :</strong> apres avoir selectionne un bloc avec Ctrl+R ou Ctrl+Maj+R,
+        appuyez sur la touche <kbd>Suppression</kbd> du clavier pour supprimer le bloc.
+    </p>
+</section>
+
+<section id="execution">
+    <h2>Raccourcis — Execution du code</h2>
+    <dl>
+        <dt><kbd>Ctrl+F5</kbd></dt>
+        <dd>
+            Executer le code Python dans un terminal externe (invite de commandes Windows).
+            Python uniquement.
+        </dd>
+    </dl>
+</section>
+
+<section id="resume">
+    <h2>Resume de tous les raccourcis</h2>
+    <table>
+        <caption>Tableau recapitulatif des raccourcis clavier</caption>
+        <thead>
+            <tr><th scope="col">Touche</th><th scope="col">Action</th><th scope="col">Langage</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><kbd>F2</kbd></td><td>Bloc if __name__ == '__main__'</td><td>Python</td></tr>
+            <tr><td><kbd>F4</kbd></td><td>Numero de ligne courante</td><td>Tous</td></tr>
+            <tr><td><kbd>Ctrl+F4</kbd></td><td>Niveau d'indentation</td><td>Tous</td></tr>
+            <tr><td><kbd>F7</kbd> / <kbd>Maj+F7</kbd></td><td>Classe suivante / precedente</td><td>Python, C/C++</td></tr>
+            <tr><td><kbd>F8</kbd> / <kbd>Maj+F8</kbd></td><td>Fonction suivante / precedente</td><td>Python, C/C++</td></tr>
+            <tr><td><kbd>NVDA+F7</kbd></td><td>Fenetre de navigation</td><td>Python, C/C++</td></tr>
+            <tr><td><kbd>Alt+Bas</kbd></td><td>Indentation plus profonde</td><td>Tous</td></tr>
+            <tr><td><kbd>Alt+Haut</kbd></td><td>Indentation moins profonde</td><td>Tous</td></tr>
+            <tr><td><kbd>Ctrl+Alt+Bas</kbd></td><td>Meme indentation, ligne suivante</td><td>Tous</td></tr>
+            <tr><td><kbd>Ctrl+Alt+Haut</kbd></td><td>Meme indentation, ligne precedente</td><td>Tous</td></tr>
+            <tr><td><kbd>Alt+Debut</kbd></td><td>Premiere ligne du niveau</td><td>Tous</td></tr>
+            <tr><td><kbd>Alt+Fin</kbd></td><td>Derniere ligne du niveau</td><td>Tous</td></tr>
+            <tr><td><kbd>Ctrl+R</kbd></td><td>Selectionner la fonction courante</td><td>Tous</td></tr>
+            <tr><td><kbd>Ctrl+Maj+R</kbd></td><td>Selectionner la classe courante</td><td>Tous</td></tr>
+            <tr><td><kbd>Maj+Alt+Bas</kbd></td><td>Etendre selection vers le bas</td><td>Tous</td></tr>
+            <tr><td><kbd>Maj+Alt+Haut</kbd></td><td>Etendre selection vers le haut</td><td>Tous</td></tr>
+            <tr><td><kbd>Ctrl+F5</kbd></td><td>Executer en Python</td><td>Python</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="historique">
+    <h2>Historique des versions</h2>
+    <dl>
+        <dt>v4.1 (2026-06-05)</dt>
+        <dd>
+            <ul>
+                <li>Fenetre de navigation NVDA+F7 : liste fonctions et classes,
+                    filtre par nom, filtre par type, pre-selection sur element courant.</li>
+                <li>Navigation au clavier entierement accessible.</li>
+                <li>Disponible pour Python et C/C++.</li>
+            </ul>
+        </dd>
+        <dt>v4.0 (2026-06-03)</dt>
+        <dd>
+            <ul>
+                <li>Detection automatique du langage Python / C/C++ / Arduino.</li>
+                <li>Navigation F7/F8 adaptee au langage detecte.</li>
+                <li>C/C++ : navigation fonctions et classes via pygments.</li>
+                <li>Annonce du numero de ligne pour toutes les navigations.</li>
+                <li>Compatible Notepad++ 32 et 64 bits.</li>
+            </ul>
+        </dd>
+        <dt>v3.6 (2026-06-03)</dt>
+        <dd>
+            <ul>
+                <li>Corrections de bugs sur F2, F4, Alt+Bas/Haut.</li>
+                <li>Manifest mis a jour pour NVDA 2026.1.</li>
+            </ul>
+        </dd>
+        <dt>v3.5 (2025-07-23)</dt>
+        <dd>
+            <ul>
+                <li>Support async def.</li>
+                <li>Detection erreur d'indentation (Ctrl+F4).</li>
+            </ul>
+        </dd>
+    </dl>
+</section>
+
+</main>
+
+<footer>
+    <p>
+        Module developpe par ECAM Rennes / My Human Kit —
+        <a href="mailto:contact@myhumankit.org">contact@myhumankit.org</a>
+    </p>
+</footer>
+
+</body>
+</html>

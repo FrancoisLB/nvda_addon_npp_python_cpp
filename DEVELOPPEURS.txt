@@ -1,0 +1,188 @@
+==============================================================================
+  DEVELOPPEURS.txt — Guide developpeur
+  NotepadPlusPlus NVDA AppModule v4.0
+==============================================================================
+
+Ce document s'adresse aux developpeurs souhaitant modifier, tester ou
+packager l'addon. Pour l'utilisation, voir readme.txt.
+
+------------------------------------------------------------------------------
+  PREREQUIS DE DEVELOPPEMENT
+------------------------------------------------------------------------------
+
+  Logiciels requis :
+  - Windows 10 ou 11 (64 bits recommande)
+  - Notepad++ 64 bits (https://notepad-plus-plus.org)
+  - NVDA 2025.1 ou superieur (https://www.nvaccess.org)
+  - Python 3.11+ (inclus dans NVDA, aussi disponible sur python.org)
+
+  Outils optionnels :
+  - SCons (packaging) : pip install scons
+    Alternative : makeAddon.bat (Python seul suffit)
+  - Git (gestion de version) : https://git-scm.com
+
+  Dependances Python de l'addon :
+  Cet addon n'a AUCUNE dependance externe a installer via pip.
+  Il utilise exclusivement :
+
+  Modules fournis par NVDA (disponibles automatiquement) :
+  - appModuleHandler  : classe de base des AppModules NVDA
+  - speech            : synthese vocale NVDA
+  - textInfos         : API de navigation dans le texte (selection/suppression)
+  - gui               : boites de dialogue NVDA/wx
+  - api               : API NVDA generale
+  - keyboardHandler   : simulation de touches clavier
+  - logHandler        : journalisation NVDA
+
+  Bibliotheque standard Python (incluse dans NVDA) :
+  - ctypes            : interface avec l'API Windows et Scintilla
+  - ctypes.wintypes   : types Windows (HWND, DWORD, etc.)
+  - re                : expressions regulieres (parsers de code)
+  - os                : manipulation de chemins
+  - logging           : journalisation
+  - abc               : classes abstraites (BaseParser)
+  - enum              : enumerations (Language, StructureType)
+  - subprocess        : execution de code Python (Ctrl+F5)
+  - tempfile          : fichiers temporaires (execution de code)
+
+------------------------------------------------------------------------------
+  STRUCTURE DU PROJET
+------------------------------------------------------------------------------
+
+  NppAccessNav_v4.0/
+  |
+  |-- manifest.ini              Metadonnees addon (version, compatibilite NVDA)
+  |-- installTasks.py           Taches installation/desinstallation (minimal)
+  |-- buildVars.py              Variables de build SCons
+  |-- makeAddon.bat             Script packaging Windows (sans SCons)
+  |-- sconstruct                Script build SCons
+  |-- readme.txt                Guide utilisateur
+  |-- CHANGELOG.txt             Historique des versions
+  |-- DEVELOPPEURS.txt          Ce fichier
+  |-- requirements.txt          Dependances (documentation)
+  |
+  |-- appModules/
+  |   |-- notepadPlusPlus.py    AppModule NVDA (orchestrateur principal)
+  |
+  |-- lib/                      Modules internes (importes par notepadPlusPlus.py)
+  |   |-- __init__.py           Rend lib/ importable comme package Python
+  |   |-- scintilla.py          Wrappeur API Scintilla via ctypes (coeur v4.0)
+  |   |-- lang_detector.py      Detection automatique du langage
+  |   |-- parsers/
+  |       |-- __init__.py
+  |       |-- base_parser.py    Classe abstraite commune a tous les parsers
+  |       |-- python_parser.py  Navigation Python (def, class, async def)
+  |       |-- cpp_parser.py     Navigation C/C++ (functions, classes, structs)
+  |
+  |-- doc/
+  |   |-- style.css             Feuille de style documentation HTML
+  |   |-- en/
+  |   |   |-- readme.md         Documentation anglaise (Markdown)
+  |   |   |-- readme.html       Documentation anglaise (HTML - lue par NVDA)
+  |   |-- fr/
+  |       |-- readme.md         Documentation francaise (Markdown)
+  |
+  |-- locale/
+      |-- en/                   Traduction anglaise
+      |   |-- manifest.ini
+      |   |-- characterDescriptions.dic
+      |   |-- symbols.dic
+      |   |-- LC_MESSAGES/
+      |       |-- nvda.po       Source de traduction (texte editable)
+      |       |-- nvda.mo       Traduction compilee (genere depuis .po)
+      |-- fr/                   Traduction francaise
+      |   |-- (meme structure)
+      |   |-- gestures.ini      Remappages clavier specifiques au francais
+      |-- uk/                   Traduction ukrainienne
+          |-- (meme structure)
+
+------------------------------------------------------------------------------
+  TESTER SANS PACKAGER — METHODE SCRATCHPAD (RECOMMANDEE)
+------------------------------------------------------------------------------
+
+  La methode la plus rapide pour tester pendant le developpement :
+
+  1. Dans NVDA : Preferences > Parametres > Avance
+     Cocher "Activer le chargement depuis le repertoire scratchpad"
+
+  2. Copier les fichiers modifies vers le scratchpad NVDA :
+
+     Source du projet              Destination scratchpad
+     --------------------------------  ----------------------------------------
+     appModules/notepadPlusPlus.py ->  %APPDATA%\nvda\scratchpad\appModules\
+     lib/                          ->  %APPDATA%\nvda\scratchpad\appModules\lib\
+
+     IMPORTANT : lib/ doit etre dans appModules/lib/ dans le scratchpad,
+     pas a la racine du scratchpad. C'est parce que notepadPlusPlus.py
+     importe lib avec : from lib.scintilla import ScintillaWrapper
+
+  3. Recharger les plugins sans redemarrer NVDA :
+     NVDA + Ctrl + F3
+
+  4. Tester dans Notepad++. Consulter le journal NVDA (NVDA+F1) pour les logs.
+
+  5. Apres modification, re-copier le(s) fichier(s) change(s) et recharger.
+
+------------------------------------------------------------------------------
+  PACKAGER L'ADDON
+------------------------------------------------------------------------------
+
+  Methode 1 — makeAddon.bat (sans dependances, recommandee) :
+    Double-cliquer sur makeAddon.bat
+    => Produit : NotepadPlusPlus-4.0.nvda-addon
+
+  Methode 2 — SCons :
+    pip install scons
+    scons
+    => Produit : NotepadPlusPlus-4.0.nvda-addon
+    Pour nettoyer : scons -c
+
+  Le .nvda-addon est une archive ZIP renommee. Pour inspecter son contenu,
+  renommer en .zip et ouvrir avec l'Explorateur Windows.
+
+------------------------------------------------------------------------------
+  AJOUTER UN NOUVEAU LANGAGE (ex: VHDL)
+------------------------------------------------------------------------------
+
+  1. Creer lib/parsers/vhdl_parser.py en heritant de BaseParser
+     Implementer : isFunction(), isClass(), getStructureType()
+
+  2. Dans lib/lang_detector.py :
+     Ajouter Language.VHDL dans l'enum
+     Ajouter SCLEX_VHDL = 64 dans les constantes
+     Ajouter la detection dans _detectFromLexer()
+
+  3. Dans appModules/notepadPlusPlus.py :
+     Importer VhdlParser
+     Ajouter le cas Language.VHDL dans _getParser()
+
+  4. Tester via scratchpad, puis packager.
+
+------------------------------------------------------------------------------
+  METTRE A JOUR POUR UNE NOUVELLE VERSION DE NVDA
+------------------------------------------------------------------------------
+
+  A chaque nouvelle version majeure annuelle de NVDA (ex: 2027.1) :
+
+  1. manifest.ini :
+       lastTestedNVDAVersion = 2027.1
+
+  2. locale/en/manifest.ini et locale/fr/manifest.ini : idem
+
+  3. buildVars.py :
+       addon_lastTestedNVDAVersion = "2027.1"
+
+  4. Incrementer addon_version dans buildVars.py et __version__ dans
+     les fichiers Python concernes.
+
+  5. Tester via scratchpad, puis packager et distribuer.
+
+------------------------------------------------------------------------------
+  CONTACTS ET CONTRIBUTIONS
+------------------------------------------------------------------------------
+
+  Contact : contact@myhumankit.org
+  My Human Kit : https://myhumankit.org
+  ECAM Rennes : https://www.ecam.fr/rennes
+
+==============================================================================

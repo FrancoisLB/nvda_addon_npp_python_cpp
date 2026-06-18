@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotepadPlusPlus — NVDA Add-on Documentation v4.1</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header>
+    <h1>NotepadPlusPlus — NVDA Complementary Module</h1>
+    <p class="version">Version 4.1 — 2026-06-05</p>
+    <p class="authors">
+        Authors: Youenn Daviaud, Mael Fer, Baptiste Picquart (ECAM Rennes / My Human Kit),
+        FrancoisLB (My Human Kit)<br>
+        Contact: <a href="mailto:contact@myhumankit.org">contact@myhumankit.org</a><br>
+        License: GPL v2 or later
+    </p>
+</header>
+
+<nav aria-label="Table of contents">
+    <h2>Table of Contents</h2>
+    <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#languages">Language Detection</a></li>
+        <li><a href="#information">Shortcuts — Information</a></li>
+        <li><a href="#navigation-structure">Shortcuts — Code Structure Navigation</a></li>
+        <li><a href="#navigation-dialog">Navigation Dialog — NVDA+F7</a></li>
+        <li><a href="#navigation-indentation">Shortcuts — Indentation Navigation</a></li>
+        <li><a href="#selection">Shortcuts — Block Selection</a></li>
+        <li><a href="#execution">Shortcuts — Code Execution</a></li>
+        <li><a href="#summary">Shortcuts Summary</a></li>
+        <li><a href="#changelog">Changelog</a></li>
+    </ul>
+</nav>
+
+<main>
+
+<section id="overview">
+    <h2>Overview</h2>
+    <p>
+        This module improves accessibility of the Notepad++ editor for blind
+        or visually impaired developers using the NVDA screen reader.
+        It adds keyboard shortcuts to navigate through Python and C/C++ source
+        code without reading the file line by line.
+    </p>
+    <p>Compatibility:</p>
+    <ul>
+        <li>Notepad++ 32-bit and 64-bit (Windows 10 / Windows 11)</li>
+        <li>NVDA 2025.1 minimum, tested up to NVDA 2026.1</li>
+        <li>Supported languages:
+            <ul>
+                <li>Python: .py .pyw .pyi</li>
+                <li>C/C++/Arduino: .c .cpp .cxx .h .hpp .ino</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+
+<section id="installation">
+    <h2>Installation</h2>
+    <ol>
+        <li>Download the file <code>NotepadPlusPlus-4.1.nvda-addon</code></li>
+        <li>Double-click it from Windows Explorer</li>
+        <li>NVDA shows a confirmation dialog — accept it</li>
+        <li>Restart NVDA (Ctrl+Alt+N or from the NVDA menu)</li>
+    </ol>
+    <h3>Uninstallation</h3>
+    <ol>
+        <li>Open the NVDA menu</li>
+        <li>Go to Tools &gt; Add-on Manager</li>
+        <li>Select the NotepadPlusPlus add-on</li>
+        <li>Click "Remove"</li>
+        <li>Restart NVDA</li>
+    </ol>
+</section>
+
+<section id="languages">
+    <h2>Language Detection</h2>
+    <p>
+        When opening a file in Notepad++, the module automatically detects
+        the language from the file extension and announces it.
+    </p>
+    <ul>
+        <li><strong>Python</strong>: announces "Python" for .py .pyw .pyi files</li>
+        <li><strong>C/C++</strong>: announces "C/C++" for .c .cpp .cxx .h .hpp .ino files</li>
+        <li><strong>Unknown</strong>: announces "type not recognized" for other files</li>
+    </ul>
+    <p>Navigation shortcuts automatically adapt to the detected language.</p>
+</section>
+
+<section id="information">
+    <h2>Shortcuts — Information</h2>
+    <dl>
+        <dt><kbd>F4</kbd></dt>
+        <dd>Announces the current line number. Works for all languages.</dd>
+
+        <dt><kbd>Ctrl+F4</kbd></dt>
+        <dd>
+            Announces the indentation level of the current line.
+            <ul>
+                <li>Python: reports an error if indentation is not a multiple of 4.</li>
+                <li>C/C++: announces the number of spaces without judgment.</li>
+            </ul>
+        </dd>
+    </dl>
+</section>
+
+<section id="navigation-structure">
+    <h2>Shortcuts — Code Structure Navigation</h2>
+    <dl>
+        <dt><kbd>NVDA+F7</kbd></dt>
+        <dd>Opens the navigation dialog (see dedicated section below).</dd>
+
+        <dt><kbd>F7</kbd> / <kbd>Shift+F7</kbd></dt>
+        <dd>
+            Go to next / previous class declaration.
+            Announces: "class_name line X".
+            Available in Python and C/C++.
+        </dd>
+
+        <dt><kbd>F8</kbd> / <kbd>Shift+F8</kbd></dt>
+        <dd>
+            Go to next / previous function or method declaration.
+            Announces: "function_name line X".
+            Available in Python and C/C++.
+        </dd>
+
+        <dt><kbd>F2</kbd></dt>
+        <dd>
+            Go to the <code>if __name__ == '__main__'</code> block.
+            Searches from the beginning of the file.
+            Python only.
+        </dd>
+    </dl>
+</section>
+
+<section id="navigation-dialog">
+    <h2>Navigation Dialog — NVDA+F7</h2>
+    <p>
+        The navigation dialog lists all functions and classes in the current file.
+        It is inspired by the NVDA elements list available in browse mode.
+    </p>
+
+    <h3>On opening</h3>
+    <ul>
+        <li>Focus is placed on the filter field.</li>
+        <li>
+            The list is pre-selected on the element closest to the current
+            cursor position in the file.
+        </li>
+    </ul>
+
+    <h3>Dialog contents</h3>
+    <dl>
+        <dt>Filter field</dt>
+        <dd>
+            Type to narrow the list by element name.
+            Example: typing "init" shows only elements whose name contains
+            "init" (__init__, initialize...).
+            The filter applies in real time.
+        </dd>
+
+        <dt>Radio buttons: All / Functions / Classes</dt>
+        <dd>
+            Filter the list by element type.
+            NVDA announces the number of elements when focus enters the list
+            after a filter or type change.
+        </dd>
+
+        <dt>Element list</dt>
+        <dd>
+            Each element shows its name followed by its line number.
+            Navigate with the up and down arrow keys.
+            NVDA reads each element during navigation.
+        </dd>
+
+        <dt>"Go to" button</dt>
+        <dd>
+            Closes the dialog and positions the cursor on the line
+            of the selected element in Notepad++.
+            NVDA announces the line number.
+        </dd>
+
+        <dt>"Close" button</dt>
+        <dd>Closes the dialog without navigating. The cursor stays in place.</dd>
+    </dl>
+
+    <h3>Keyboard navigation in the dialog</h3>
+    <table>
+        <caption>Keyboard shortcuts for the navigation dialog</caption>
+        <thead>
+            <tr><th scope="col">Key</th><th scope="col">Action</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd></td><td>Move between widgets</td></tr>
+            <tr><td><kbd>Arrow up/down</kbd></td><td>Previous / next element in the list</td></tr>
+            <tr><td><kbd>Enter</kbd></td><td>Navigate to the selected element</td></tr>
+            <tr><td><kbd>Escape</kbd></td><td>Close without navigating</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="navigation-indentation">
+    <h2>Shortcuts — Indentation Navigation</h2>
+    <p>These shortcuts work for all languages.</p>
+    <dl>
+        <dt><kbd>Alt+Down</kbd></dt>
+        <dd>Go to the next more-indented line. Announces: "text line X, indentation Y".</dd>
+
+        <dt><kbd>Alt+Up</kbd></dt>
+        <dd>Go to the next less-indented line. Announces: "text line X, indentation Y".</dd>
+
+        <dt><kbd>Ctrl+Alt+Down</kbd></dt>
+        <dd>Next line at the same indentation level. Announces: "text line X".</dd>
+
+        <dt><kbd>Ctrl+Alt+Up</kbd></dt>
+        <dd>Previous line at the same indentation level. Announces: "text line X".</dd>
+
+        <dt><kbd>Alt+Home</kbd></dt>
+        <dd>First line at the current indentation level. Announces: "text line X".</dd>
+
+        <dt><kbd>Alt+End</kbd></dt>
+        <dd>Last line at the current indentation level. Announces: "text line X".</dd>
+    </dl>
+</section>
+
+<section id="selection">
+    <h2>Shortcuts — Block Selection</h2>
+    <dl>
+        <dt><kbd>Ctrl+R</kbd></dt>
+        <dd>Select the current function or method.</dd>
+
+        <dt><kbd>Ctrl+Shift+R</kbd></dt>
+        <dd>Select the current class.</dd>
+
+        <dt><kbd>Shift+Alt+Down</kbd></dt>
+        <dd>Extend selection to the next indentation level change.</dd>
+
+        <dt><kbd>Shift+Alt+Up</kbd></dt>
+        <dd>Extend selection to the previous indentation level change.</dd>
+    </dl>
+    <p>
+        <strong>Tip:</strong> after selecting a block with Ctrl+R or Ctrl+Shift+R,
+        press the <kbd>Delete</kbd> key to remove the block.
+    </p>
+</section>
+
+<section id="execution">
+    <h2>Shortcuts — Code Execution</h2>
+    <dl>
+        <dt><kbd>Ctrl+F5</kbd></dt>
+        <dd>
+            Run the Python code in an external terminal (Windows command prompt).
+            Python only.
+        </dd>
+    </dl>
+</section>
+
+<section id="summary">
+    <h2>Shortcuts Summary</h2>
+    <table>
+        <caption>Complete keyboard shortcuts reference</caption>
+        <thead>
+            <tr><th scope="col">Key</th><th scope="col">Action</th><th scope="col">Language</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><kbd>F2</kbd></td><td>if __name__ == '__main__' block</td><td>Python</td></tr>
+            <tr><td><kbd>F4</kbd></td><td>Current line number</td><td>All</td></tr>
+            <tr><td><kbd>Ctrl+F4</kbd></td><td>Indentation level</td><td>All</td></tr>
+            <tr><td><kbd>F7</kbd> / <kbd>Shift+F7</kbd></td><td>Next / previous class</td><td>Python, C/C++</td></tr>
+            <tr><td><kbd>F8</kbd> / <kbd>Shift+F8</kbd></td><td>Next / previous function</td><td>Python, C/C++</td></tr>
+            <tr><td><kbd>NVDA+F7</kbd></td><td>Navigation dialog</td><td>Python, C/C++</td></tr>
+            <tr><td><kbd>Alt+Down</kbd></td><td>Deeper indentation</td><td>All</td></tr>
+            <tr><td><kbd>Alt+Up</kbd></td><td>Shallower indentation</td><td>All</td></tr>
+            <tr><td><kbd>Ctrl+Alt+Down</kbd></td><td>Same indentation, next line</td><td>All</td></tr>
+            <tr><td><kbd>Ctrl+Alt+Up</kbd></td><td>Same indentation, previous line</td><td>All</td></tr>
+            <tr><td><kbd>Alt+Home</kbd></td><td>First line of current level</td><td>All</td></tr>
+            <tr><td><kbd>Alt+End</kbd></td><td>Last line of current level</td><td>All</td></tr>
+            <tr><td><kbd>Ctrl+R</kbd></td><td>Select current function</td><td>All</td></tr>
+            <tr><td><kbd>Ctrl+Shift+R</kbd></td><td>Select current class</td><td>All</td></tr>
+            <tr><td><kbd>Shift+Alt+Down</kbd></td><td>Extend selection downward</td><td>All</td></tr>
+            <tr><td><kbd>Shift+Alt+Up</kbd></td><td>Extend selection upward</td><td>All</td></tr>
+            <tr><td><kbd>Ctrl+F5</kbd></td><td>Run Python code</td><td>Python</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section id="changelog">
+    <h2>Changelog</h2>
+    <dl>
+        <dt>v4.1 (2026-06-05)</dt>
+        <dd>
+            <ul>
+                <li>NVDA+F7 navigation dialog: lists functions and classes,
+                    filter by name, filter by type, pre-selection on current element.</li>
+                <li>Fully keyboard-accessible dialog.</li>
+                <li>Available for Python and C/C++.</li>
+            </ul>
+        </dd>
+        <dt>v4.0 (2026-06-03)</dt>
+        <dd>
+            <ul>
+                <li>Automatic language detection for Python / C/C++ / Arduino.</li>
+                <li>F7/F8 navigation adapted to detected language.</li>
+                <li>C/C++: function and class navigation via pygments.</li>
+                <li>Line number announced for all navigations.</li>
+                <li>Compatible with Notepad++ 32-bit and 64-bit.</li>
+            </ul>
+        </dd>
+        <dt>v3.6 (2026-06-03)</dt>
+        <dd>
+            <ul>
+                <li>Bug fixes for F2, F4, Alt+Down/Up.</li>
+                <li>Manifest updated for NVDA 2026.1.</li>
+            </ul>
+        </dd>
+        <dt>v3.5 (2025-07-23)</dt>
+        <dd>
+            <ul>
+                <li>Support for async def.</li>
+                <li>Indentation error detection (Ctrl+F4).</li>
+            </ul>
+        </dd>
+    </dl>
+</section>
+
+</main>
+
+<footer>
+    <p>
+        Module developed by ECAM Rennes / My Human Kit —
+        <a href="mailto:contact@myhumankit.org">contact@myhumankit.org</a>
+    </p>
+</footer>
+
+</body>
+</html>

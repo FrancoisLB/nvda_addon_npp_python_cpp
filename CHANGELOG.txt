@@ -1,0 +1,160 @@
+==============================================================================
+  CHANGELOG — NotepadPlusPlus NVDA AppModule
+  Historique complet des versions
+==============================================================================
+
+------------------------------------------------------------------------------
+  v4.2 — 2026-06-06 — SIGNETS
+
+  Nouvelles fonctionnalites :
+  - Gestion des signets de code accessible avec NVDA :
+      Ctrl+F2 : poser/enlever un signet sur la ligne courante
+                (repere visuel natif Notepad++ + vocalisation NVDA)
+      F2      : aller au signet suivant (navigation circulaire)
+      Shift+F2 : aller au signet precedent (navigation circulaire)
+  - Annonce vocale complete : "Signet X sur Y : texte ligne N"
+  - Signets visibles dans la fenetre de navigation NVDA+F7
+    (bouton radio "Signets" ajoute)
+  - F9 : bloc if __name__ == '__main__' (deplace depuis F2)
+
+  Limitations documentees :
+  - Les signets poses via le menu Notepad++ ne sont pas vocalises
+    (utiliser Ctrl+F2 avec NVDA actif)
+  - Les signets sont perdus a la fermeture de NVDA (session uniquement)
+  - Les numeros de ligne peuvent etre inexacts apres insertion/suppression
+    de lignes dans le fichier
+
+------------------------------------------------------------------------------
+  v4.1 — 2026-06-05 — FENETRE DE NAVIGATION
+
+  Nouvelles fonctionnalites :
+  - Fenetre de navigation NVDA+F7 : liste toutes les fonctions et classes
+    du fichier courant, avec filtre dynamique par nom et par type.
+  - Pre-selection automatique sur l'element le plus proche du curseur.
+  - Navigation entierement au clavier (Tab, fleches, Entree, Echap).
+  - Annonce du nombre d'elements lors du focus sur la liste.
+  - Disponible pour Python et C/C++.
+  - Documentation HTML complete en francais et en anglais.
+
+------------------------------------------------------------------------------
+  v4.0 — 2026-06-03 — MULTI-LANGAGES
+
+  Nouvelles fonctionnalites :
+  - Detection automatique du langage via le titre de la fenetre Notepad++
+    (lecture Win32 GetWindowText — fiable, sans Scintilla)
+  - F2/Maj+F2 et F7/Maj+F7 adaptes automatiquement au langage detecte :
+    Python : def, async def, class
+    C/C++  : fonctions (void foo(), int bar()...), class, struct
+  - Annonce vocale du langage au changement de fichier :
+    "Python", "C/C++", "type non reconnu"
+  - Extension des extensions reconnues :
+    Python : .py .pyw .pyi
+    C/C++  : .c .cpp .cxx .h .hpp .ino (Arduino)
+  - Heritage de nvdaBuiltin.appModules.notepadPlusPlus
+    => compatibilite Notepad++ 64 bits garantie
+  - Toutes les corrections de la v3.6 conservees
+
+  v4.0 — 2026-06-03 — REFONTE MAJEURE (annulee)
+------------------------------------------------------------------------------
+
+  Changements architecturaux :
+  - Nouveau moteur de lecture base sur l'API Scintilla via ctypes/SendMessage
+    Remplace l'API NVDA standard (makeTextInfo/POSITION_CARET)
+    => Compatible Notepad++ 32 bits ET 64 bits de facon native et fiable
+  - Nouveau module lib/scintilla.py : wrappeur Scintilla complet
+    (getCurrentPos, lineFromPosition, getLine, getLineCount, gotoLine,
+     getLexer, getLexerLanguage, getFullText...)
+  - Nouveau module lib/lang_detector.py : detection automatique du langage
+    via SCI_GETLEXER (Python=2, C/C++=3) avec fallback sur extension fichier
+  - Nouveau module lib/parsers/base_parser.py : classe abstraite commune
+  - Nouveau module lib/parsers/python_parser.py : navigation Python (migree)
+  - Nouveau module lib/parsers/cpp_parser.py : navigation C/C++ (nouveau)
+  - AppModule allege : orchestre les modules, dispatch selon langage
+
+  Nouvelles fonctionnalites :
+  - Detection automatique du langage a chaque changement de fichier
+  - NVDA annonce le langage detecte : "Langage : Python", "Langage : C/C++"
+  - F2/Maj+F2 et F7/Maj+F7 adaptes au langage (Python ou C/C++)
+  - Navigation C/C++ : fonctions libres, methodes de classe, classes, structs
+
+  Corrections conservees de la v3.6 :
+  - F8, F4, Alt+Bas, Alt+Haut
+
+  Fichiers nouveaux :
+  - lib/__init__.py
+  - lib/scintilla.py
+  - lib/lang_detector.py
+  - lib/parsers/__init__.py
+  - lib/parsers/base_parser.py
+  - lib/parsers/python_parser.py
+  - lib/parsers/cpp_parser.py
+  - readme.txt (ce fichier)
+  - requirements.txt
+  - CHANGELOG.txt
+  - DEVELOPPEURS.txt
+
+------------------------------------------------------------------------------
+  v3.6 — 2026-06-03
+------------------------------------------------------------------------------
+
+  Corrections de bugs :
+  - F8 (jumpToMain) : recherche du bloc __main__ depuis le debut du fichier
+    (avant : ne trouvait pas si le curseur etait apres le bloc)
+  - F4 (announceCurrentLineNumber) : comptage ligne par ligne depuis
+    POSITION_FIRST — numero toujours exact, correspond a Notepad++ Ctrl+G
+    (avant : fallback fragile sur count('\n') donnait parfois un mauvais numero)
+  - Alt+Bas (moveToNextIndentLevel) : cherche uniquement lineIndent > courant
+    (avant : lineIndent != courant donnait un comportement aleatoire)
+  - Alt+Haut (moveToPreviousIndentLevel) : cherche uniquement lineIndent < courant
+    (avant : meme probleme)
+
+  Infrastructure :
+  - Manifest mis a jour : version 3.6, lastTestedNVDAVersion = 2026.1
+  - Suppression de updateChannel = None (provoquait erreur manifest)
+  - Suppression de la reference cassee donate_dialog dans installTasks.py
+  - installTasks.py simplifie au strict minimum (sans import addonHandler)
+  - Docstrings NumPy enrichies sur les 4 fonctions corrigees
+  - log.error() avec exc_info=True pour de meilleures traces de debug
+
+------------------------------------------------------------------------------
+  v3.5 — 2025-07-23
+------------------------------------------------------------------------------
+
+  Nouvelles fonctionnalites :
+  - Support des fonctions async def (F2/Maj+F2)
+  - Detection et annonce des erreurs d'indentation (Ctrl+F4)
+  - Annonce du niveau logique d'indentation (nombre de niveaux de 4 espaces)
+
+  Ameliorations :
+  - Positionnement du curseur ameliore apres navigation :
+    curseur place au debut du texte (apres les espaces d'indentation)
+    et non en debut de ligne absolue
+  - Navigation Alt+Bas/Haut : prise en compte des tabulations (tab = 4 espaces)
+
+  Corrections :
+  - selectCurrentClass : detection correcte de la fin de classe
+  - deleteCurrentFunction : confirmation avant suppression ajoutee
+
+------------------------------------------------------------------------------
+  v3.0 — 2025-01-08 (version initiale publiee)
+------------------------------------------------------------------------------
+
+  Fonctionnalites initiales :
+  - F4  : annonce du numero de ligne courante
+  - Ctrl+F4 : annonce du niveau d'indentation
+  - F2 / Maj+F2 : navigation fonction suivante/precedente (Python)
+  - F7 / Maj+F7 : navigation classe suivante/precedente (Python)
+  - F8  : aller au bloc if __name__ == '__main__'
+  - Alt+Bas/Haut : navigation par changement de niveau d'indentation
+  - Ctrl+Alt+Bas/Haut : navigation au meme niveau d'indentation
+  - Alt+Debut/Fin : premiere/derniere ligne du niveau courant
+  - Maj+Alt+Bas/Haut : selection par niveau d'indentation
+  - Ctrl+R / Ctrl+Maj+R : selection fonction/classe courante
+  - Ctrl+Suppr / Ctrl+Maj+Suppr : suppression avec confirmation
+  - Ctrl+F5 : execution du code Python dans un terminal
+  - Compatible Notepad++ 32 bits uniquement (limitation levee en v4.0)
+
+  Auteurs : Youenn Daviaud, Mael Fer, Baptiste Picquart (ECAM Rennes / MHK)
+            FrancoisLB (My Human Kit)
+
+==============================================================================
