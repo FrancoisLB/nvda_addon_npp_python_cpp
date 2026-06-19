@@ -1,11 +1,14 @@
 @echo off
 REM =============================================================================
 REM makeAddon.bat
-REM NotepadPlusPlus NVDA AppModule v4.0 — Script de packaging Windows
+REM NotepadPlusPlus NVDA AppModule — Script de packaging Windows
 REM
-REM Usage : double-cliquer sur ce fichier ou l'executer dans un terminal
-REM Resultat : NotepadPlusPlus-4.1.nvda-addon dans le repertoire courant
-REM Prerequis : Python 3.x installe et accessible dans le PATH
+REM Usage    : double-cliquer sur ce fichier ou l'executer dans un terminal
+REM Resultat : nvda_addon_npp_python_cpp-4.2.nvda-addon dans le repertoire courant
+REM Prerequis: Python 3.x installe et accessible dans le PATH
+REM
+REM Le nom exact du fichier produit est determine dynamiquement par
+REM buildVars.py (addon_name + addon_version). Pas de SCons requis.
 REM =============================================================================
 
 echo.

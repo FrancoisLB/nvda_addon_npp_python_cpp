@@ -1,6 +1,6 @@
 ==============================================================================
   NotepadPlusPlus — Module complementaire NVDA pour Notepad++
-  Version 4.1 — 2026-06-05
+  Version 4.2 — 2026-06-18
   Auteurs : Youenn Daviaud, Mael Fer, Baptiste Picquart (ECAM Rennes / MHK)
             FrancoisLB (My Human Kit)
   Contact : contact@myhumankit.org
@@ -14,7 +14,7 @@ et C/C++ sans avoir a parcourir le fichier ligne par ligne.
 
 Compatibilite :
   - Notepad++ 32 bits et 64 bits (Windows 10 / Windows 11)
-  - NVDA 2025.1 minimum, teste jusqu'a NVDA 2026.1
+  - NVDA 2026.1 minimum, teste jusqu'a NVDA 2026.1
   - Langages supportes : Python (.py .pyw .pyi)
                          C/C++/Arduino (.c .cpp .cxx .h .hpp .ino)
 
@@ -22,7 +22,7 @@ Compatibilite :
   INSTALLATION
 ------------------------------------------------------------------------------
 
-  1. Telecharger le fichier NotepadPlusPlus-4.1.nvda-addon
+  1. Telecharger le fichier nvda_addon_npp_python_cpp-4.2.nvda-addon
   2. Double-cliquer dessus depuis l'Explorateur Windows
   3. NVDA affiche une boite de dialogue de confirmation — accepter
   4. Redemarrer NVDA (Ctrl+Alt+N ou depuis le menu NVDA)
@@ -70,16 +70,41 @@ Compatibilite :
                   Annonce : "nom_fonction ligne X"
                   Disponible en Python et C/C++.
 
-  F2              Aller au bloc if __name__ == '__main__'
+  F9              Aller au bloc if __name__ == '__main__'
                   Recherche depuis le debut du fichier.
                   Python uniquement.
+
+------------------------------------------------------------------------------
+  RACCOURCIS CLAVIER — SIGNETS (nouveaute v4.2)
+------------------------------------------------------------------------------
+
+  Ctrl+F2         Poser ou enlever un signet sur la ligne courante.
+                  Annonce : "Signet pose ligne X" ou "Signet enleve ligne X".
+                  Le repere visuel natif Notepad++ est pose simultanement.
+
+  F2              Aller au signet SUIVANT (navigation circulaire)
+                  Annonce : "Signet X sur Y : texte ligne N"
+
+  Maj+F2          Aller au signet PRECEDENT (navigation circulaire)
+                  Annonce : "Signet X sur Y : texte ligne N"
+
+  Les signets poses via Ctrl+F2 sont egalement visibles dans la fenetre
+  de navigation NVDA+F7 (bouton radio "Signets").
+
+  Limitations :
+  - Les signets poses via le menu Notepad++ ne sont pas vocalises par NVDA.
+    Utiliser Ctrl+F2 avec NVDA actif pour une annonce vocale.
+  - Les signets sont perdus a la fermeture de NVDA (session uniquement).
+  - Les numeros de ligne peuvent etre inexacts apres insertion ou suppression
+    de lignes dans le fichier.
 
 ------------------------------------------------------------------------------
   FENETRE DE NAVIGATION — NVDA+F7
 ------------------------------------------------------------------------------
 
-  La fenetre de navigation liste toutes les fonctions et classes du fichier
-  courant. Elle s'inspire de la liste d'elements NVDA (NVDA+F7 en mode web).
+  La fenetre de navigation liste toutes les fonctions, classes et signets
+  du fichier courant. Elle s'inspire de la liste d'elements NVDA (NVDA+F7
+  en mode web).
 
   A l'ouverture :
     - Le focus est place sur le champ de filtre.
@@ -90,7 +115,7 @@ Compatibilite :
     - Champ filtre : tapez pour restreindre la liste par nom.
       Exemple : taper "init" affiche uniquement les elements
       dont le nom contient "init" (__init__, initialize...).
-    - Boutons radio : filtrer par type (Tout / Fonctions / Classes).
+    - Boutons radio : filtrer par type (Tout / Fonctions / Classes / Signets).
       NVDA annonce le nombre d'elements quand le focus entre dans la liste.
     - Liste des elements : nom suivi du numero de ligne.
       Navigation avec les fleches haut et bas.
@@ -151,10 +176,13 @@ Compatibilite :
 
   Touche          Action
   -------         ------
-  F2              Bloc if __name__ == '__main__' (Python)
+  Ctrl+F2         Poser/enlever un signet sur la ligne courante
+  F2              Signet suivant
+  Maj+F2          Signet precedent
   F4              Numero de ligne courante
   F7 / Maj+F7     Classe suivante / precedente
   F8 / Maj+F8     Fonction suivante / precedente
+  F9              Bloc if __name__ == '__main__' (Python)
   NVDA+F7         Fenetre de navigation
   Ctrl+F4         Niveau d'indentation
   Alt+Bas/Haut    Indentation plus/moins profonde
@@ -172,6 +200,13 @@ Compatibilite :
   HISTORIQUE DES VERSIONS
 ------------------------------------------------------------------------------
 
+  v4.2 (2026-06-18)
+    - Gestion des signets : Ctrl+F2 (poser/enlever), F2 (suivant),
+      Maj+F2 (precedent). Annonce vocale complete.
+    - Signets visibles dans la fenetre de navigation NVDA+F7
+      (bouton radio "Signets" ajoute).
+    - F9 : bloc if __name__ == '__main__' (deplace depuis F2).
+
   v4.1 (2026-06-05)
     - Fenetre de navigation NVDA+F7 : liste fonctions et classes,
       filtre par nom, filtre par type, pre-selection sur element courant,
@@ -181,12 +216,8 @@ Compatibilite :
   v4.0 (2026-06-03)
     - Detection automatique du langage (Python / C/C++ / Arduino .ino)
     - Navigation F7/F8 adaptee au langage detecte.
-    - C/C++ : navigation fonctions et classes via pygments.
+    - C/C++ : navigation fonctions et classes.
     - Annonce du numero de ligne pour toutes les navigations.
-    - Reorganisation des raccourcis :
-        F2 : bloc if __name__ == '__main__' (Python)
-        F7/Maj+F7 : classe suivante/precedente
-        F8/Maj+F8 : fonction/methode suivante/precedente
     - Compatible Notepad++ 32 et 64 bits.
 
   v3.6 (2026-06-03)

@@ -1,6 +1,6 @@
 ==============================================================================
   DEVELOPPEURS.txt — Guide developpeur
-  NotepadPlusPlus NVDA AppModule v4.0
+  NotepadPlusPlus NVDA AppModule v4.2
 ==============================================================================
 
 Ce document s'adresse aux developpeurs souhaitant modifier, tester ou
@@ -13,12 +13,10 @@ packager l'addon. Pour l'utilisation, voir readme.txt.
   Logiciels requis :
   - Windows 10 ou 11 (64 bits recommande)
   - Notepad++ 64 bits (https://notepad-plus-plus.org)
-  - NVDA 2025.1 ou superieur (https://www.nvaccess.org)
+  - NVDA 2026.1 ou superieur (https://www.nvaccess.org)
   - Python 3.11+ (inclus dans NVDA, aussi disponible sur python.org)
 
   Outils optionnels :
-  - SCons (packaging) : pip install scons
-    Alternative : makeAddon.bat (Python seul suffit)
   - Git (gestion de version) : https://git-scm.com
 
   Dependances Python de l'addon :
@@ -49,24 +47,26 @@ packager l'addon. Pour l'utilisation, voir readme.txt.
   STRUCTURE DU PROJET
 ------------------------------------------------------------------------------
 
-  NppAccessNav_v4.0/
+  nvda_addon_npp_python_cpp/
   |
-  |-- manifest.ini              Metadonnees addon (version, compatibilite NVDA)
+  |-- manifest.ini              NE PAS EDITER MANUELLEMENT
+  |                             Genere automatiquement depuis buildVars.py
+  |                             par build_addon.py au moment du packaging.
+  |-- buildVars.py              SOURCE DE VERITE : toutes les metadonnees
+  |                             (version, auteurs, description, compatibilite)
+  |-- build_addon.py            Script de packaging Python (sans SCons)
+  |-- makeAddon.bat             Lanceur Windows pour build_addon.py
   |-- installTasks.py           Taches installation/desinstallation (minimal)
-  |-- buildVars.py              Variables de build SCons
-  |-- makeAddon.bat             Script packaging Windows (sans SCons)
-  |-- sconstruct                Script build SCons
   |-- readme.txt                Guide utilisateur
   |-- CHANGELOG.txt             Historique des versions
   |-- DEVELOPPEURS.txt          Ce fichier
-  |-- requirements.txt          Dependances (documentation)
   |
   |-- appModules/
   |   |-- notepadPlusPlus.py    AppModule NVDA (orchestrateur principal)
   |
   |-- lib/                      Modules internes (importes par notepadPlusPlus.py)
   |   |-- __init__.py           Rend lib/ importable comme package Python
-  |   |-- scintilla.py          Wrappeur API Scintilla via ctypes (coeur v4.0)
+  |   |-- scintilla.py          Wrappeur API Scintilla via ctypes
   |   |-- lang_detector.py      Detection automatique du langage
   |   |-- parsers/
   |       |-- __init__.py
@@ -97,6 +97,26 @@ packager l'addon. Pour l'utilisation, voir readme.txt.
           |-- (meme structure)
 
 ------------------------------------------------------------------------------
+  METTRE A JOUR LES METADONNEES (version, description, compatibilite...)
+------------------------------------------------------------------------------
+
+  TOUJOURS modifier buildVars.py — jamais manifest.ini directement.
+  Le manifest.ini est regenere a chaque build ; toute modification manuelle
+  sera ecrasee.
+
+  Champs a mettre a jour dans buildVars.py :
+    addon_version               : numero de version
+    addon_minimumNVDAVersion    : version NVDA minimale requise
+    addon_lastTestedNVDAVersion : derniere version NVDA testee
+    addon_description           : description affichee dans le Store NVDA
+    __version__ et __date__     : version et date du fichier buildVars lui-meme
+
+  Mettre a jour aussi :
+    __version__ et __date__ dans build_addon.py et installTasks.py
+    L'entete de readme.txt et DEVELOPPEURS.txt
+    CHANGELOG.txt (ajouter une entree)
+
+------------------------------------------------------------------------------
   TESTER SANS PACKAGER — METHODE SCRATCHPAD (RECOMMANDEE)
 ------------------------------------------------------------------------------
 
@@ -108,9 +128,9 @@ packager l'addon. Pour l'utilisation, voir readme.txt.
   2. Copier les fichiers modifies vers le scratchpad NVDA :
 
      Source du projet              Destination scratchpad
-     --------------------------------  ----------------------------------------
-     appModules/notepadPlusPlus.py ->  %APPDATA%\nvda\scratchpad\appModules\
-     lib/                          ->  %APPDATA%\nvda\scratchpad\appModules\lib\
+     ----------------------------  ----------------------------------------
+     appModules/notepadPlusPlus.py -> %APPDATA%\nvda\scratchpad\appModules\
+     lib/                          -> %APPDATA%\nvda\scratchpad\appModules\lib\
 
      IMPORTANT : lib/ doit etre dans appModules/lib/ dans le scratchpad,
      pas a la racine du scratchpad. C'est parce que notepadPlusPlus.py
@@ -127,18 +147,17 @@ packager l'addon. Pour l'utilisation, voir readme.txt.
   PACKAGER L'ADDON
 ------------------------------------------------------------------------------
 
-  Methode 1 — makeAddon.bat (sans dependances, recommandee) :
+  Methode unique — makeAddon.bat (sans dependances, recommandee) :
     Double-cliquer sur makeAddon.bat
-    => Produit : NotepadPlusPlus-4.0.nvda-addon
-
-  Methode 2 — SCons :
-    pip install scons
-    scons
-    => Produit : NotepadPlusPlus-4.0.nvda-addon
-    Pour nettoyer : scons -c
+    => Appelle python build_addon.py
+    => Genere le manifest.ini depuis buildVars.py
+    => Produit : nvda_addon_npp_python_cpp-4.2.nvda-addon
 
   Le .nvda-addon est une archive ZIP renommee. Pour inspecter son contenu,
   renommer en .zip et ouvrir avec l'Explorateur Windows.
+
+  Note : SCons n'est plus utilise. build_addon.py est un script Python pur,
+  sans dependance externe.
 
 ------------------------------------------------------------------------------
   AJOUTER UN NOUVEAU LANGAGE (ex: VHDL)
@@ -164,18 +183,16 @@ packager l'addon. Pour l'utilisation, voir readme.txt.
 
   A chaque nouvelle version majeure annuelle de NVDA (ex: 2027.1) :
 
-  1. manifest.ini :
-       lastTestedNVDAVersion = 2027.1
-
-  2. locale/en/manifest.ini et locale/fr/manifest.ini : idem
-
-  3. buildVars.py :
+  1. Dans buildVars.py :
        addon_lastTestedNVDAVersion = "2027.1"
+       (et addon_minimumNVDAVersion si necessaire)
 
-  4. Incrementer addon_version dans buildVars.py et __version__ dans
-     les fichiers Python concernes.
+  2. Dans locale/en/manifest.ini et locale/fr/manifest.ini : idem
 
-  5. Tester via scratchpad, puis packager et distribuer.
+  3. Incrementer addon_version dans buildVars.py.
+
+  4. Tester via scratchpad, puis packager et distribuer.
+     Le manifest.ini sera regenere automatiquement au prochain build.
 
 ------------------------------------------------------------------------------
   CONTACTS ET CONTRIBUTIONS
